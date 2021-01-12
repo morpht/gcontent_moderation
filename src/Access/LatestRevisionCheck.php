@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -98,11 +99,15 @@ class LatestRevisionCheck implements AccessInterface {
     /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
     foreach ($group_contents as $group_content) {
       $group = $group_content->getGroup();
-      // @todo Check has 'view own unpublished' permission when it is implemented
-      $access = $access->orIf(AccessResult::allowedIf(
-        $group->hasPermission('view latest version', $account)
-        && $group->hasPermission('view any unpublished ' . $plugin_id . ' entity', $account)
-      ));
+
+      $latestVersionAccess = $group->hasPermission('view latest version', $account);
+      $access->orIf(AccessResult::allowedIf($group->hasPermission('view any unpublished ' . $plugin_id . ' entity', $account) && $latestVersionAccess));
+
+      // Check entity owner access.
+      $owner_access = AccessResult::allowedIf($group->hasPermission('view own unpublished ' . $plugin_id . ' entity', $account) && $latestVersionAccess);
+      $owner_access = $owner_access->andIf((AccessResult::allowedIf($entity instanceof EntityOwnerInterface && ($entity->getOwnerId() === $account->id()))));
+      $access = $access->orIf($owner_access);
+
       $access->addCacheableDependency($group_content);
       $access->addCacheableDependency($group);
     }
