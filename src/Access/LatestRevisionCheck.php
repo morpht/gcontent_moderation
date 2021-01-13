@@ -99,13 +99,17 @@ class LatestRevisionCheck implements AccessInterface {
     /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
     foreach ($group_contents as $group_content) {
       $group = $group_content->getGroup();
-
-      $latestVersionAccess = $group->hasPermission('view latest version', $account);
-      $access->orIf(AccessResult::allowedIf($group->hasPermission('view any unpublished ' . $plugin_id . ' entity', $account) && $latestVersionAccess));
-
+      $access = $access->orIf(AccessResult::allowedIf(
+        $group->hasPermission('view latest version', $account)
+        && $group->hasPermission('view unpublished ' . $plugin_id . ' entity', $account)
+      ));
       // Check entity owner access.
-      $owner_access = AccessResult::allowedIf($group->hasPermission('view own unpublished ' . $plugin_id . ' entity', $account) && $latestVersionAccess);
-      $owner_access = $owner_access->andIf((AccessResult::allowedIf($entity instanceof EntityOwnerInterface && ($entity->getOwnerId() === $account->id()))));
+      $owner_access = $access->orIf(AccessResult::allowedIf(
+        $group->hasPermission('view latest version', $account)
+        && $group->hasPermission('view own unpublished ' . $plugin_id . ' entity', $account)
+        && $entity instanceof EntityOwnerInterface
+        && $entity->getOwnerId() === $account->id()
+      ));
       $access = $access->orIf($owner_access);
 
       $access->addCacheableDependency($group_content);
