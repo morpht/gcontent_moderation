@@ -60,7 +60,7 @@ class GroupStateTransitionValidation extends StateTransitionValidation implement
       // As this may be occurring during validation, the moderation state on the
       // entity may be the new state, rather than the current state, so make
       // sure we're working with the current version.
-      $original_entity = $entity->isNew() ? $entity : $this->entityTypeManager->getStorage($entity->getEntityTypeId())->loadRevision($entity->getLoadedRevisionId());
+      $original_entity = $entity->isNew() ? $entity : \Drupal::service('entity_type.manager')->getStorage($entity->getEntityTypeId())->loadRevision($entity->getLoadedRevisionId());
       $transition = $workflow->getTypePlugin()->getTransitionFromStateToState($original_state->id(), $new_state->id());
       return in_array($transition->id(), array_keys($this->getValidTransitions($original_entity, $user)));
     }
