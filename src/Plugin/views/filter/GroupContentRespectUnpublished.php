@@ -82,10 +82,13 @@ class GroupContentRespectUnpublished extends FilterPluginBase {
     }
 
     /** @var \Drupal\group\Plugin\views\argument\GroupId $groupIdPlugin */
+    $groupId = NULL;
     $groupIdPlugin = $argument['gid'];
     if ($groupIdPlugin->getPluginId() === 'group_id') {
       $argPos = $groupIdPlugin->position;
-      $groupId = $this->view->args[$argPos];
+      if (isset($this->view->args[$argPos])) {
+        $groupId = $this->view->args[$argPos];
+      }
     }
 
     if (!$groupId) {
