@@ -1,5 +1,5 @@
 {
-    "name": "25knots/gcontent_moderation",
+    "name": "drupal/gcontent_moderation",
     "type": "drupal-module",
     "description": "Gcontent moderation",
     "homepage": "https://www.drupal.org/project/gcontent_moderation",
