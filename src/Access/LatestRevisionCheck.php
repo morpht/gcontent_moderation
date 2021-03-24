@@ -11,11 +11,12 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\Routing\Route;
+use Drupal\content_moderation\Access\LatestRevisionCheck as ContentModerationLatestRevisionCheck;
 
 /**
  * Check access to the latest revision in group content.
  */
-class LatestRevisionCheck implements AccessInterface {
+class LatestRevisionCheck extends ContentModerationLatestRevisionCheck implements AccessInterface {
 
   /**
    * The content moderation latest version access service.
