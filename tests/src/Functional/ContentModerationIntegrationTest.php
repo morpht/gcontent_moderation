@@ -46,7 +46,7 @@ class ContentModerationIntegrationTest extends GroupBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'content_moderation',
     'gcontent_moderation',
     'gcontent_moderation_test',
@@ -58,7 +58,7 @@ class ContentModerationIntegrationTest extends GroupBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create the editorial workflow.
@@ -168,7 +168,7 @@ class ContentModerationIntegrationTest extends GroupBrowserTestBase {
       'moderation_state[0][state]' => 'published',
     ];
     try {
-      $this->drupalPostForm(NULL, $edit, t('Save'));
+      $this->submitForm($edit, t('Save'));
     }
     catch (InvalidArgumentException $exception) {
       $expectedException = TRUE;
@@ -183,9 +183,9 @@ class ContentModerationIntegrationTest extends GroupBrowserTestBase {
     $edit = [
       'moderation_state[0][state]' => 'draft',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, t('Save'));
     $this->drupalGet($node->toUrl('edit-form'));
-    $this->drupalPostForm(NULL, ['title[0][value]' => 'New draft'], t('Save'));
+    $this->submitForm(['title[0][value]' => 'New draft'], t('Save'));
     $this->assertSession()->statusCodeEquals(200);
 
     // The group admin should have access.
@@ -199,7 +199,7 @@ class ContentModerationIntegrationTest extends GroupBrowserTestBase {
     $edit = [
       'moderation_state[0][state]' => 'published',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, t('Save'));
     $this->assertSession()->statusCodeEquals(200);
 
   }

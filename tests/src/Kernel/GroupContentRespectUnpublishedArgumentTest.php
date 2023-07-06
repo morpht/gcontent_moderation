@@ -23,7 +23,7 @@ class GroupContentRespectUnpublishedArgumentTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'content_moderation',
     'gcontent_moderation',
     'gcontent_moderation_test',
@@ -41,7 +41,7 @@ class GroupContentRespectUnpublishedArgumentTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = FALSE) {
+  protected function setUp($import_test_views = FALSE): void {
     parent::setUp($import_test_views);
 
     $this->installEntitySchema('content_moderation_state');

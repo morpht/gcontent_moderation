@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\gcontent_moderation\Kernel;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\Routing\Route;
  */
 class ContentModerationIntegrationTest extends GroupKernelTestBase {
 
+  use ProphecyTrait;
   use ContentTypeCreationTrait;
   use ContentModerationTestTrait;
   use NodeCreationTrait;
@@ -46,7 +48,7 @@ class ContentModerationIntegrationTest extends GroupKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'content_moderation',
     'filter',
     'gcontent_moderation',
@@ -60,7 +62,7 @@ class ContentModerationIntegrationTest extends GroupKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('content_moderation_state');
