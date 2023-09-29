@@ -38,7 +38,7 @@ class GcontentModerationServiceProvider extends ServiceProviderBase {
         new Reference('content_moderation.moderation_information'),
         new Reference('current_route_match'),
         new Reference('entity_type.manager'),
-        new Reference('plugin.manager.group_content_enabler'),
+        new Reference('group_relation_type.manager'),
       ]);
       $state_transition_definition->setPublic(TRUE);
       $state_transition_definition->setDecoratedService('content_moderation.state_transition_validation');

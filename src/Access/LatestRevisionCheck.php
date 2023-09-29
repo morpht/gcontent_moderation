@@ -79,7 +79,7 @@ class LatestRevisionCheck extends ContentModerationLatestRevisionCheck implement
     $plugin_id = 'group_' . $entity->getEntityTypeId() . ':' . $entity->bundle();
 
     // Only act if there are group content types for this entity bundle.
-    $group_content_types = $this->entityTypeManager->getStorage('group_content_type')->loadByContentPluginId($plugin_id);
+    $group_content_types = $this->entityTypeManager->getStorage('group_content_type')->loadByPluginId($plugin_id);
     if (empty($group_content_types)) {
       return $access;
     }

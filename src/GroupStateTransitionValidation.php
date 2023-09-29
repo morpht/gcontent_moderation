@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Context\GroupRouteContextTrait;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\workflows\StateInterface;
 use Drupal\workflows\Transition;
 use Drupal\workflows\WorkflowInterface;
@@ -51,11 +51,9 @@ class GroupStateTransitionValidation extends StateTransitionValidation implement
   protected $currentRouteMatch;
 
   /**
-   * The group content enabler plugin manager.
-   *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupContentEnablerManager;
+  protected GroupRelationTypeManagerInterface $groupRelationTypeManager;
 
   /**
    * Constructs the group state transition validation object.
@@ -68,15 +66,15 @@ class GroupStateTransitionValidation extends StateTransitionValidation implement
    *   The current route match service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_enabler_manager
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $group_relation_type_manager
    *   The group content enabler plugin manager.
    */
-  public function __construct(StateTransitionValidationInterface $inner, ModerationInformationInterface $moderation_information, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, GroupContentEnablerManagerInterface $group_content_enabler_manager) {
+  public function __construct(StateTransitionValidationInterface $inner, ModerationInformationInterface $moderation_information, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, GroupRelationTypeManagerInterface $group_relation_type_manager) {
     $this->inner = $inner;
     $this->entityTypeManager = $entity_type_manager;
     $this->moderationInformation = $moderation_information;
     $this->currentRouteMatch = $route_match;
-    $this->groupContentEnablerManager = $group_content_enabler_manager;
+    $this->groupRelationTypeManager = $group_relation_type_manager;
   }
 
   /**
@@ -97,7 +95,7 @@ class GroupStateTransitionValidation extends StateTransitionValidation implement
     }
 
     // Only act if there are group content types for this entity bundle.
-    $group_content_types = $this->entityTypeManager->getStorage('group_content_type')->loadByContentPluginId($this->getPluginId($entity));
+    $group_content_types = $this->entityTypeManager->getStorage('group_content_type')->loadByPluginId($this->getPluginId($entity));
     if (empty($group_content_types)) {
       return $this->inner->getValidTransitions($entity, $user);
     }
@@ -141,13 +139,13 @@ class GroupStateTransitionValidation extends StateTransitionValidation implement
    */
   public function getPluginId(ContentEntityInterface $entity) {
     $generic = FALSE;
-    foreach ($this->groupContentEnablerManager->getDefinitions() as $id => $def) {
-      if ($def['entity_type_id'] == $entity->getEntityTypeId()
-        && $def['entity_bundle'] == $entity->bundle()) {
+    foreach ($this->groupRelationTypeManager->getDefinitions() as $id => $def) {
+      if ($def->getEntityTypeId() == $entity->getEntityTypeId()
+        && $def->getEntityBundle() == $entity->bundle()) {
 
         return $id;
       }
-      elseif ($def['entity_type_id'] === $entity->getEntityTypeId()) {
+      elseif ($def->getEntityTypeId() === $entity->getEntityTypeId()) {
         $generic = $id;
       }
     }

@@ -18,7 +18,7 @@ function gcontent_moderation_views_data_alter(&$data) {
               Use this filter to filter revisions of nodes within a group
               which users should not have access to."),
     'filter' => [
-      'table' => 'group_content_field_data_node_field_data',
+      'table' => 'group_relationship_field_data_node_field_data',
       'field' => 'uid',
       'id' => 'group_content_respect_unpublished',
       'title' => t('Respect group content unpublished permission'),
